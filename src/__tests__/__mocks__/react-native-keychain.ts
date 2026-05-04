@@ -12,7 +12,7 @@ export const ACCESS_CONTROL = {
   BIOMETRY_ANY_OR_DEVICE_PASSCODE: 'BIOMETRY_ANY_OR_DEVICE_PASSCODE',
 }
 
-let mockStorage: Map<string, { username: string; password: string }> = new Map()
+const mockStorage: Map<string, { username: string; password: string }> = new Map()
 
 export function setGenericPassword(
   username: string,
