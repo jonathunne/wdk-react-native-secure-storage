@@ -15,7 +15,7 @@ export function hasHardwareAsync(): Promise<boolean> {
   return Promise.resolve(mockHasHardware)
 }
 
-export function authenticateAsync(options?: {
+export function authenticateAsync(_options?: {
   promptMessage?: string
   cancelLabel?: string
   disableDeviceFallback?: boolean
