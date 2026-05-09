@@ -406,9 +406,12 @@ export function createSecureStorage(options?: SecureStorageOptions): SecureStora
       
       logger.debug('Retrieving secure value', { baseKey, identifier, requireAuth, actuallyRequireAuth })
 
+      const readOptions = createKeychainOptions(securityLevel, actuallyRequireAuth)
+
       const keychainOptions = actuallyRequireAuth
         ? {
             service: storageKey,
+            accessControl: readOptions?.accessControl,
             authenticationPrompt: {
               title: authOptions.promptMessage || 'Authenticate to access your wallet',
               cancel: authOptions.cancelLabel || 'Cancel',

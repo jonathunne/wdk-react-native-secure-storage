@@ -313,26 +313,28 @@ describe('SecureStorage', () => {
     });
 
     it('should retrieve key with authentication by default', async () => {
-      (mockLocalAuth as any).getEnrolledLevelAsync.mockResolvedValue(2); // BIOMETRIC
+      (mockLocalAuth as any).getEnrolledLevelAsync.mockResolvedValue(2); // BIOMETRIC_WEAK
       
       await storage.getEncryptionKey();
 
       expect(mockKeychain.getGenericPassword).toHaveBeenCalledTimes(1);
       const options = mockKeychain.getGenericPassword.mock.calls[0][0];
       expect(options).toHaveProperty('authenticationPrompt');
+      expect(options).toHaveProperty('accessControl', Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE);
     });
 
-    it('should retrieve key with authentication when requireBiometrics is true', async () => {
-      (mockLocalAuth as any).getEnrolledLevelAsync.mockResolvedValue(2); // BIOMETRIC
+    it('should retrieve key with BIOMETRY_ANY_OR_DEVICE_PASSCODE when BIOMETRIC_STRONG', async () => {
+      (mockLocalAuth as any).getEnrolledLevelAsync.mockResolvedValue(3); // BIOMETRIC_STRONG
       
-      await storage.getEncryptionKey(undefined, { requireBiometrics: true });
+      await storage.getEncryptionKey();
     
       expect(mockKeychain.getGenericPassword).toHaveBeenCalledTimes(1);
       const options = mockKeychain.getGenericPassword.mock.calls[0][0];
       expect(options).toHaveProperty('authenticationPrompt');
+      expect(options).toHaveProperty('accessControl', Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE);
     });
 
-    it('should retrieve key with authentication when device has PIN but no biometrics', async () => {
+    it('should retrieve key with DEVICE_PASSCODE when device has PIN but no biometrics', async () => {
       (mockLocalAuth as any).getEnrolledLevelAsync.mockResolvedValue(1); // SECRET
 
       mockKeychain.getGenericPassword.mockResolvedValue({
@@ -348,6 +350,7 @@ describe('SecureStorage', () => {
       expect(mockKeychain.getGenericPassword).toHaveBeenCalledTimes(1);
       const options = mockKeychain.getGenericPassword.mock.calls[0][0];
       expect(options).toHaveProperty('authenticationPrompt');
+      expect(options).toHaveProperty('accessControl', Keychain.ACCESS_CONTROL.DEVICE_PASSCODE);
     });
 
     it('should retrieve key without authentication when device has no security', async () => {
@@ -366,6 +369,7 @@ describe('SecureStorage', () => {
       expect(mockKeychain.getGenericPassword).toHaveBeenCalledTimes(1);
       const options = mockKeychain.getGenericPassword.mock.calls[0][0];
       expect(options).not.toHaveProperty('authenticationPrompt');
+      expect(options).not.toHaveProperty('accessControl');
     });
   })
 
